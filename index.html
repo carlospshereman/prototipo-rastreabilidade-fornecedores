@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Piloto - Rastreabilidade Unificada de Fornecedores</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --cb-blue: #0033c6;
+      --cb-blue-hover: #002799;
+      --cb-blue-subtle: #ebf0ff;
+      --cb-red: #e71a3b;
+      --cb-red-hover: #c81431;
+      --cb-red-subtle: #fdebed;
+      --cb-bg: #f8f9fa;
+      --cb-surface: #ffffff;
+      --cb-off-white: #f0efea;
+      --cb-text: #1c1e21;
+      --cb-text-secondary: #5e6573;
+      --cb-border: #e4e7ec;
+      --cb-border-strong: #ced4da;
+      --cb-success: #198754;
+      --cb-success-subtle: #e6f4ea;
+      --cb-warning: #8c5300;
+      --cb-warning-subtle: #fff4e5;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      padding: 24px;
+      background: var(--cb-bg);
+      color: var(--cb-text);
+      font-family: "Urbanist", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    button, input { font: inherit; }
+    button:focus-visible, a:focus-visible, input:focus-visible, tr:focus-visible {
+      outline: 3px solid rgba(0, 51, 198, 0.28);
+      outline-offset: 2px;
+    }
+    .container { max-width: 1180px; margin: 0 auto; }
+    header {
+      min-height: 64px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 24px;
+      border-bottom: 1px solid var(--cb-border);
+      padding: 0 0 16px;
+      margin-bottom: 24px;
+    }
+    .brand { display: flex; align-items: center; gap: 16px; }
+    .brand-logo { display: inline-flex; align-items: center; flex-shrink: 0; }
+    .brand-group {
+      padding: 5px 8px;
+      border-radius: 9999px 0 0 9999px;
+      background: var(--cb-red);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+    .brand-name {
+      display: inline-flex;
+      gap: 3px;
+      padding: 4px 10px 4px 8px;
+      border: 1px solid var(--cb-border);
+      border-left: 0;
+      border-radius: 0 9999px 9999px 0;
+      background: var(--cb-surface);
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+    .brand-casas { color: var(--cb-blue); }
+    .brand-bahia { color: var(--cb-red); }
+    .brand-divider { width: 1px; height: 28px; background: var(--cb-border-strong); }
+    .brand-system { color: var(--cb-text-secondary); font-size: 14px; font-weight: 500; }
+    .nav-tabs { display: flex; gap: 8px; }
+    .nav-btn {
+      padding: 9px 14px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--cb-text-secondary);
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background-color 150ms ease, color 150ms ease;
+    }
+    .nav-btn:hover { background: var(--cb-blue-subtle); color: var(--cb-blue); }
+    .nav-btn.active { background: var(--cb-blue); color: #fff; }
+    .card {
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid var(--cb-border);
+      border-radius: 12px;
+      background: var(--cb-surface);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+    }
+    .card-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+      color: var(--cb-text-secondary);
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .search-box { display: flex; gap: 12px; margin-bottom: 16px; }
+    .search-input {
+      min-width: 0;
+      flex: 1;
+      padding: 11px 14px;
+      border: 1px solid var(--cb-border-strong);
+      border-radius: 8px;
+      background: var(--cb-surface);
+      color: var(--cb-text);
+      font-size: 14px;
+    }
+    .search-input::placeholder { color: var(--cb-text-secondary); }
+    .search-input:focus { border-color: var(--cb-blue); outline: 3px solid rgba(0, 51, 198, 0.12); }
+    .btn-search {
+      min-height: 44px;
+      padding: 0 24px;
+      border: 1px solid var(--cb-blue);
+      border-radius: 8px;
+      background: var(--cb-blue);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background-color 150ms ease;
+    }
+    .btn-search:hover { border-color: var(--cb-blue-hover); background: var(--cb-blue-hover); }
+    .quick-suggestions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+    .quick-label, .metric-sub { color: var(--cb-text-secondary); font-size: 12px; }
+    .quick-link { color: var(--cb-blue); font-size: 12px; font-weight: 600; text-decoration: none; }
+    .quick-link:hover { text-decoration: underline; }
+    .supplier-heading { margin-bottom: 20px; }
+    .supplier-heading h2 { font-size: 24px; font-weight: 700; line-height: 1.25; }
+    .supplier-meta { margin-top: 4px; color: var(--cb-text-secondary); font-size: 14px; }
+    .stepper { display: flex; justify-content: space-between; position: relative; margin: 30px 10px 20px; }
+    .stepper::before {
+      position: absolute;
+      top: 18px;
+      right: 20px;
+      left: 20px;
+      height: 3px;
+      background: var(--cb-border);
+      content: "";
+    }
+    .step-item { position: relative; z-index: 1; width: 120px; text-align: center; }
+    .step-circle {
+      display: flex;
+      width: 40px;
+      height: 40px;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 8px;
+      border: 3px solid var(--cb-surface);
+      border-radius: 50%;
+      background: var(--cb-off-white);
+      color: var(--cb-text-secondary);
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .step-item.completed .step-circle { background: var(--cb-success); color: #fff; }
+    .step-item.active-warning .step-circle { background: var(--cb-warning-subtle); color: var(--cb-warning); }
+    .step-item.active-danger .step-circle { background: var(--cb-red); color: #fff; }
+    .step-label { font-size: 13px; font-weight: 600; }
+    .step-time { margin-top: 2px; color: var(--cb-text-secondary); font-size: 12px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 30px; }
+    .insight-card { padding: 16px; border: 1px solid var(--cb-border); border-radius: 8px; background: var(--cb-bg); }
+    .insight-card.recommended { border-color: var(--cb-blue); background: var(--cb-blue-subtle); }
+    .insight-title {
+      margin-bottom: 8px;
+      color: var(--cb-text-secondary);
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .recommended .insight-title { color: var(--cb-blue); }
+    .insight-copy { font-size: 14px; line-height: 1.5; }
+    .insight-copy.emphasized { font-weight: 600; }
+    .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+    .metric-card {
+      padding: 18px;
+      border: 1px solid var(--cb-border);
+      border-radius: 12px;
+      background: var(--cb-surface);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+      text-align: left;
+    }
+    .metric-val { margin: 6px 0; color: var(--cb-blue); font-size: 32px; font-weight: 800; line-height: 1.2; }
+    .metric-unit { color: var(--cb-text-secondary); font-size: 16px; font-weight: 500; }
+    .metric-note { font-size: 12px; }
+    .metric-note.warning { color: var(--cb-warning); }
+    .metric-note.success { color: var(--cb-success); }
+    .metric-note.danger { color: var(--cb-red-hover); }
+    .bar-row { margin-bottom: 16px; }
+    .bar-row:last-child { margin-bottom: 0; }
+    .bar-info { display: flex; justify-content: space-between; gap: 16px; margin-bottom: 6px; font-size: 13px; }
+    .bar-track { height: 10px; overflow: hidden; border-radius: 9999px; background: var(--cb-off-white); }
+    .bar-fill { height: 100%; border-radius: inherit; }
+    .bg-green { background: var(--cb-success); }
+    .bg-yellow { background: #b76e00; }
+    .bg-red { background: var(--cb-red); }
+    .badge { display: inline-block; padding: 4px 10px; border-radius: 9999px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+    .badge-red { border: 1px solid var(--cb-red); background: var(--cb-red-subtle); color: var(--cb-red-hover); }
+    .badge-yellow { border: 1px solid #e6a23c; background: var(--cb-warning-subtle); color: var(--cb-warning); }
+    .badge-green { border: 1px solid #9ac9aa; background: var(--cb-success-subtle); color: #146c43; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td { padding: 12px; border-bottom: 1px solid var(--cb-border); text-align: left; }
+    th { background: var(--cb-bg); color: var(--cb-text-secondary); font-size: 12px; font-weight: 700; }
+    tbody tr { cursor: pointer; }
+    tbody tr:hover, tbody tr:focus-visible { background: var(--cb-blue-subtle); }
+    td code { color: var(--cb-blue); font-family: inherit; font-weight: 700; }
+    .table-meta { color: var(--cb-text-secondary); font-size: 12px; }
+
+    @media (max-width: 760px) {
+      body { padding: 16px; }
+      header { align-items: flex-start; flex-direction: column; gap: 16px; }
+      .brand { flex-wrap: wrap; gap: 10px; }
+      .nav-tabs { width: 100%; }
+      .nav-btn { flex: 1; padding: 9px 8px; font-size: 13px; }
+      .stepper { overflow-x: auto; justify-content: flex-start; gap: 8px; padding-bottom: 8px; }
+      .stepper::before { right: auto; width: 600px; }
+      .step-item { flex: 0 0 112px; }
+      .grid-2, .metric-grid { grid-template-columns: 1fr; }
+      .card-title { align-items: flex-start; flex-direction: column; }
+    }
+    @media (max-width: 480px) {
+      body { padding: 12px; }
+      .brand-system { font-size: 13px; }
+      .search-box { align-items: stretch; flex-direction: column; }
+      .btn-search { width: 100%; }
+      .card { padding: 16px; }
+      .supplier-heading h2 { font-size: 20px; }
+      .bar-info { flex-direction: column; gap: 2px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <header>
+    <div class="brand">
+      <span class="brand-logo" aria-label="Grupo Casas Bahia">
+        <span class="brand-group">GRUPO</span><span class="brand-name"><span class="brand-casas">CASAS</span><span class="brand-bahia">BAHIA</span></span>
+      </span>
+      <span class="brand-divider" aria-hidden="true"></span>
+      <span class="brand-system">Rastreabilidade de Fornecedores</span>
+    </div>
+    <div class="nav-tabs" role="tablist" aria-label="Visões do sistema">
+      <button type="button" class="nav-btn active" onclick="switchView('buyer')" role="tab" aria-selected="true">Visão do Comprador</button>
+      <button type="button" class="nav-btn" onclick="switchView('executive')" role="tab" aria-selected="false">Visão Diretoria / Fila</button>
+    </div>
+  </header>
+
+  <!-- VIEW 1: COMPRADOR -->
+  <div id="view-buyer">
+    <div class="card">
+      <div class="card-title">Consulta direta <span>Autosserviço de compras</span></div>
+      <div class="search-box">
+        <input type="text" id="search-input" class="search-input" aria-label="CNPJ ou razão social do fornecedor" placeholder="Digite CNPJ ou razão social (ex.: Logística, 12.345, TechPrime)" value="12.345.678/0001-90">
+        <button type="button" class="btn-search" onclick="handleSearch()">Buscar</button>
+      </div>
+      <div class="quick-suggestions">
+        <span class="quick-label">Sugestões rápidas:</span>
+        <a class="quick-link" href="#" onclick="quickSelect('12.345.678/0001-90'); return false;">Logística Integrada</a>
+        <a class="quick-link" href="#" onclick="quickSelect('98.765.432/0001-10'); return false;">TechPrime</a>
+        <a class="quick-link" href="#" onclick="quickSelect('33.445.566/0001-77'); return false;">Delta Consultoria</a>
+      </div>
+    </div>
+
+    <div class="card" id="detail-card">
+      <div class="card-title">
+        <span>Rastreio de Homologação</span>
+        <span id="supplier-status-badge" class="badge badge-red">PARADO EM COMPLIANCE (5 DIAS)</span>
+      </div>
+
+      <div class="supplier-heading">
+        <h2 id="supplier-name">Logística Integrada Brasil Ltda</h2>
+        <p class="supplier-meta">
+          CNPJ: <span id="supplier-cnpj">12.345.678/0001-90</span> • Comprador Responsável: <span id="supplier-buyer">Matheus Santos</span>
+        </p>
+      </div>
+
+      <!-- STEPPER PIZZA TRACKER -->
+      <div class="stepper" id="tracker-steps">
+        <!-- Renderizado dinamicamente pelo JavaScript -->
+      </div>
+
+      <div class="grid-2">
+        <div class="insight-card">
+          <div class="insight-title">Diagnóstico do gargalo</div>
+          <div id="supplier-bottleneck" class="insight-copy">
+            Pendência de análise de risco reputacional. Última atualização realizada há 48h pela equipe de conformidade.
+          </div>
+        </div>
+        <div class="insight-card recommended">
+          <div class="insight-title">Ação recomendada ao comprador</div>
+          <div id="supplier-action" class="insight-copy emphasized">
+            Acionar facilitador de Compliance antes do fechamento da rodada comercial.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIEW 2: DIRETORIA -->
+  <div id="view-executive" style="display: none;">
+    <div class="metric-grid">
+      <div class="metric-card">
+        <div class="metric-sub">LEAD TIME MÉDIO TOTAL</div>
+        <div class="metric-val">7.4 <span class="metric-unit">dias</span></div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-sub">VOLUME EM ESTEIRA</div>
+        <div class="metric-val">42</div>
+        <div class="metric-note success">Distribuídos em 4 áreas</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-sub">ADERÊNCIA AOS SLAS</div>
+        <div class="metric-val">82%</div>
+        <div class="metric-note danger">18% em atraso ou atenção</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Distribuição da Demanda Atual por Área Técnica</div>
+      <div class="bar-row">
+        <div class="bar-info">
+          <span>Cadastro de Fornecedores (SLA: 1 dia)</span>
+          <span><strong>6 processos</strong> • Média: 1,1 dia</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill bg-green" style="width: 14%;"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-info">
+          <span>Tributário / Fiscal (SLA: 2 dias)</span>
+          <span><strong>12 processos</strong> • Média: 2,2 dias</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill bg-yellow" style="width: 28%;"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bar-info">
+          <span>Compliance / Due Diligence (SLA: 8 dias)</span>
+          <span><strong>24 processos</strong> (Gargalo Principal) • Média: 10,1 dias</span>
+        </div>
+        <div class="bar-track"><div class="bar-fill bg-red" style="width: 58%;"></div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Fila Consolidada de Casos Críticos (Amostra Operacional)</div>
+      <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Fornecedor</th>
+            <th>Código do vendedor</th>
+            <th>Etapa Atual</th>
+            <th>Dias na Fila</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="table-suppliers">
+          <!-- Linhas injetadas dinamicamente -->
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // BASE DE DADOS SIMULADA (ALINHADA À APRESENTAÇÃO)
+  const database = [
+    {
+      id: "PRC-001",
+      cnpj: "12.345.678/0001-90",
+      razao: "Logística Integrada Brasil Ltda",
+      codigoVendedor: "S14582444",
+      comprador: "Matheus Santos",
+      etapa: 5, // 1: Convite, 2: Fornecedor, 3: Cadastro, 4: Tributário, 5: Compliance, 6: ERP
+      diasEtapa: 5,
+      slaMeta: 8,
+      status: "Atrasado",
+      pendencia: "Pendência de análise de risco reputacional. Última atualização realizada há 48h pela equipe de conformidade.",
+      acao: "Acionar facilitador de Compliance antes do fechamento da rodada comercial.",
+      tempos: ["0,5 dia", "0,5 dia", "1,0 dia", "1,0 dia", "5 dias", "Pendente"]
+    },
+    {
+      id: "PRC-002",
+      cnpj: "98.765.432/0001-10",
+      razao: "TechPrime Soluções de TI",
+      codigoVendedor: "S14582445",
+      comprador: "Lucas Mendes",
+      etapa: 3,
+      diasEtapa: 1,
+      slaMeta: 1,
+      status: "Atenção",
+      pendencia: "Conferência de Cartão CNPJ e Contrato Social em triagem cadastral.",
+      acao: "Acompanhar prazo da etapa de Cadastro no fechamento do dia.",
+      tempos: ["0,5 dia", "0,5 dia", "1,0 dia", "Pendente", "Pendente", "Pendente"]
+    },
+    {
+      id: "PRC-003",
+      cnpj: "33.445.566/0001-77",
+      razao: "Delta Consultoria e Gestão",
+      codigoVendedor: "S14582446",
+      comprador: "Matheus Santos",
+      etapa: 4,
+      diasEtapa: 2,
+      slaMeta: 2,
+      status: "Atrasado",
+      pendencia: "CND Municipal de São Paulo com inconsistência no portal da prefeitura.",
+      acao: "Solicitar CND atualizada junto ao fornecedor parceiro para desbloqueio fiscal.",
+      tempos: ["1,0 dia", "0,5 dia", "1,0 dia", "2 dias", "Pendente", "Pendente"]
+    },
+    {
+      id: "PRC-004",
+      cnpj: "11.223.344/0001-55",
+      razao: "Alpha Transportes Rodoviários",
+      codigoVendedor: "S14582447",
+      comprador: "Juliana M.",
+      etapa: 6,
+      diasEtapa: 0,
+      slaMeta: 0,
+      status: "Concluído",
+      pendencia: "Processo concluído e cadastrado no SAP com sucesso.",
+      acao: "Fornecedor homologado. Emissão de Pedido de Compra liberada.",
+      tempos: ["1,0 dia", "0,5 dia", "1,0 dia", "1,0 dia", "2 dias", "Concluído"]
+    }
+  ];
+
+  function renderTracker(supplier) {
+    const steps = [
+      { name: "1. Convite", sla: "SLA: 2 dias" },
+      { name: "2. Fornecedor" },
+      { name: "3. Cadastro", sla: "SLA: 1 dia" },
+      { name: "4. Tributário", sla: "SLA: 2 dias" },
+      { name: "5. Compliance", sla: "SLA: 8 dias" },
+      { name: "6. ERP", sla: "SLA: Imediato" }
+    ];
+
+    const container = document.getElementById("tracker-steps");
+    container.innerHTML = "";
+
+    steps.forEach((step, index) => {
+      const stepNum = index + 1;
+      let statusClass = "";
+      let icon = stepNum;
+
+      if (stepNum < supplier.etapa) {
+        statusClass = "completed";
+        icon = "✓";
+      } else if (stepNum === supplier.etapa) {
+        if (supplier.status === "Atrasado") {
+          statusClass = "active-danger";
+          icon = "!";
+        } else if (supplier.status === "Atenção") {
+          statusClass = "active-warning";
+          icon = "!";
+        } else if (supplier.status === "Concluído") {
+          statusClass = "completed";
+          icon = "✓";
+        } else {
+          statusClass = "completed";
+          icon = "●";
+        }
+      }
+
+      const item = document.createElement("div");
+      item.className = `step-item ${statusClass}`;
+      item.innerHTML = `
+        <div class="step-circle">${icon}</div>
+        <div class="step-label">${step.name}</div>
+        <div class="step-time">${supplier.tempos[index]}</div>
+      `;
+      container.appendChild(item);
+    });
+
+    document.getElementById("supplier-name").innerText = supplier.razao;
+    document.getElementById("supplier-cnpj").innerText = supplier.cnpj;
+    document.getElementById("supplier-buyer").innerText = supplier.comprador;
+    document.getElementById("supplier-bottleneck").innerText = supplier.pendencia;
+    document.getElementById("supplier-action").innerText = supplier.acao;
+
+    const badge = document.getElementById("supplier-status-badge");
+    badge.innerText = `${supplier.status.toUpperCase()} (${supplier.diasEtapa} DIAS)`;
+    badge.className = `badge ${supplier.status === 'Atrasado' ? 'badge-red' : supplier.status === 'Atenção' ? 'badge-yellow' : 'badge-green'}`;
+  }
+
+  function handleSearch() {
+    const query = document.getElementById("search-input").value.trim().toLowerCase();
+    const found = database.find(s => s.cnpj.includes(query) || s.razao.toLowerCase().includes(query));
+    if (found) {
+      renderTracker(found);
+    } else {
+      alert("Nenhum fornecedor encontrado para o termo pesquisado. Tente 'Logística' ou 'TechPrime'.");
+    }
+  }
+
+  function quickSelect(cnpj) {
+    document.getElementById("search-input").value = cnpj;
+    handleSearch();
+  }
+
+  function switchView(view) {
+    document.querySelectorAll(".nav-btn").forEach((button, index) => {
+      const isActive = index === (view === "buyer" ? 0 : 1);
+      button.classList.toggle("active", isActive);
+      button.setAttribute("aria-selected", String(isActive));
+    });
+    if (view === 'buyer') {
+      document.getElementById("view-buyer").style.display = "block";
+      document.getElementById("view-executive").style.display = "none";
+    } else {
+      document.getElementById("view-buyer").style.display = "none";
+      document.getElementById("view-executive").style.display = "block";
+      populateTable();
+    }
+  }
+
+  function populateTable() {
+    const tbody = document.getElementById("table-suppliers");
+    tbody.innerHTML = "";
+    database.forEach(s => {
+      const tr = document.createElement("tr");
+      tr.tabIndex = 0;
+      tr.setAttribute("aria-label", `${s.razao}, ${s.status}, etapa ${s.etapa}`);
+      tr.onclick = () => { switchView('buyer'); quickSelect(s.cnpj); };
+      tr.onkeydown = event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          tr.click();
+        }
+      };
+      tr.innerHTML = `
+        <td><code>${s.id}</code></td>
+        <td><strong>${s.razao}</strong><br><span class="table-meta">${s.cnpj}</span></td>
+        <td>${s.codigoVendedor}</td>
+        <td>Etapa ${s.etapa}</td>
+        <td>${s.diasEtapa} dias</td>
+        <td><span class="badge ${s.status === 'Atrasado' ? 'badge-red' : s.status === 'Atenção' ? 'badge-yellow' : 'badge-green'}">${s.status}</span></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  document.getElementById("search-input").addEventListener("keydown", event => {
+    if (event.key === "Enter") handleSearch();
+  });
+
+  // Inicialização com o exemplo do pitch
+  renderTracker(database[0]);
+</script>
+</body>
+</html>
