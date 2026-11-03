@@ -55,7 +55,30 @@
       margin-bottom: 24px;
     }
     .brand { display: flex; align-items: center; gap: 16px; }
-    .brand-logo { display: block; width: 200px; height: auto; flex-shrink: 0; }
+    .brand-logo { display: inline-flex; align-items: center; flex-shrink: 0; }
+    .brand-group {
+      padding: 5px 8px;
+      border-radius: 9999px 0 0 9999px;
+      background: var(--cb-red);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+    }
+    .brand-name {
+      display: inline-flex;
+      gap: 3px;
+      padding: 4px 10px 4px 8px;
+      border: 1px solid var(--cb-border);
+      border-left: 0;
+      border-radius: 0 9999px 9999px 0;
+      background: var(--cb-surface);
+      font-size: 14px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+    }
+    .brand-casas { color: var(--cb-blue); }
+    .brand-bahia { color: var(--cb-red); }
     .brand-divider { width: 1px; height: 28px; background: var(--cb-border-strong); }
     .brand-system { color: var(--cb-text-secondary); font-size: 14px; font-weight: 500; }
     .nav-tabs { display: flex; gap: 8px; }
@@ -232,7 +255,9 @@
 <div class="container">
   <header>
     <div class="brand">
-      <img class="brand-logo" src="assets/grupo-casas-bahia.png" alt="Grupo Casas Bahia">
+      <span class="brand-logo" aria-label="Grupo Casas Bahia">
+        <span class="brand-group">GRUPO</span><span class="brand-name"><span class="brand-casas">CASAS</span><span class="brand-bahia">BAHIA</span></span>
+      </span>
       <span class="brand-divider" aria-hidden="true"></span>
       <span class="brand-system">Rastreabilidade de Fornecedores</span>
     </div>
