@@ -189,6 +189,21 @@
     .insight-copy { font-size: 14px; line-height: 1.5; }
     .insight-copy.emphasized { font-weight: 600; }
     .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+    .metric-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px; }
+    .section-block { margin-bottom: 28px; }
+    .section-block:last-child { margin-bottom: 0; }
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid var(--cb-blue);
+      color: var(--cb-text);
+      font-size: 16px;
+      font-weight: 800;
+    }
+    .section-title-note { color: var(--cb-text-secondary); font-size: 12px; font-weight: 500; }
     .metric-card {
       padding: 18px;
       border: 1px solid var(--cb-border);
@@ -306,6 +321,31 @@
       background: var(--cb-bg);
       color: var(--cb-text-secondary);
     }
+    .filter-bar { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px; }
+    .filter-field { display: flex; min-width: 180px; flex: 1; flex-direction: column; gap: 6px; }
+    .filter-field label { color: var(--cb-text-secondary); font-size: 12px; font-weight: 700; }
+    .filter-select {
+      padding: 10px 12px;
+      border: 1px solid var(--cb-border-strong);
+      border-radius: 8px;
+      background: var(--cb-surface);
+      color: var(--cb-text);
+      font-size: 14px;
+    }
+    .filter-select:focus { border-color: var(--cb-blue); outline: 3px solid rgba(0, 51, 198, 0.12); }
+    .btn-clear-filter {
+      min-height: 44px;
+      padding: 0 18px;
+      border: 1px solid var(--cb-border-strong);
+      border-radius: 8px;
+      background: var(--cb-surface);
+      color: var(--cb-text-secondary);
+      cursor: pointer;
+      font-weight: 700;
+      transition: background-color 150ms ease, color 150ms ease, border-color 150ms ease;
+    }
+    .btn-clear-filter:hover { border-color: var(--cb-blue); color: var(--cb-blue); background: var(--cb-blue-subtle); }
+    .filter-result-count { margin-top: 12px; color: var(--cb-text-secondary); font-size: 12px; }
     .donut-layout {
       display: flex;
       flex-wrap: wrap;
@@ -351,7 +391,9 @@
       .stepper { overflow-x: auto; justify-content: flex-start; gap: 8px; padding-bottom: 8px; }
       .stepper::before { right: auto; width: 600px; }
       .step-item { flex: 0 0 112px; }
-      .grid-2, .metric-grid, .executive-grid { grid-template-columns: 1fr; }
+      .grid-2, .metric-grid, .metric-grid-2, .executive-grid { grid-template-columns: 1fr; }
+      .filter-bar { flex-direction: column; align-items: stretch; }
+      .btn-clear-filter { width: 100%; }
       .card-title { align-items: flex-start; flex-direction: column; }
       .trend-row { grid-template-columns: 1fr; gap: 6px; }
     }
@@ -382,7 +424,7 @@
     </div>
     <div class="nav-tabs" role="tablist" aria-label="Visões do sistema">
       <button type="button" class="nav-btn active" onclick="switchView('buyer')" role="tab" aria-selected="true">Consulta de Fornecedor</button>
-      <button type="button" class="nav-btn" onclick="switchView('executive')" role="tab" aria-selected="false">Versão Administrativa</button>
+      <button type="button" class="nav-btn" onclick="switchView('executive')" role="tab" aria-selected="false">Painel Administrativo</button>
     </div>
   </header>
 
@@ -405,7 +447,7 @@
     <div class="card" id="detail-card">
       <div class="card-title">
         <span>Rastreio de Homologação</span>
-        <span id="supplier-status-badge" class="badge badge-red">PARADO EM COMPLIANCE (5 DIAS)</span>
+        <span id="supplier-status-badge" class="badge badge-red">PARADO EM COMPLIANCE (6 DIAS)</span>
       </div>
 
       <div class="supplier-heading">
@@ -437,123 +479,177 @@
     </div>
   </div>
 
-  <!-- VIEW 2: DIRETORIA -->
+  <!-- VIEW 2: PAINEL ADMINISTRATIVO -->
   <div id="view-executive" style="display: none;">
-    <div class="metric-grid">
-      <div class="metric-card">
-        <div class="metric-sub">LEAD TIME MÉDIO TOTAL</div>
-        <div class="metric-val">7.4 <span class="metric-unit">dias</span></div>
+
+    <div class="section-block">
+      <div class="section-title">
+        <span>Visão Geral do Processo</span>
+        <span class="section-title-note">Saúde geral da homologação de fornecedores</span>
       </div>
-      <div class="metric-card">
-        <div class="metric-sub">VOLUME EM ESTEIRA</div>
-        <div class="metric-val">42</div>
-        <div class="metric-note success">Distribuídos em 4 áreas</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-sub">ADERÊNCIA AOS SLAS</div>
-        <div class="metric-val">82%</div>
-        <div class="metric-note danger">18% em atraso ou atenção</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-sub">SLA EM RISCO (PRÓXIMAS 48H)</div>
-        <div class="metric-val">9</div>
-        <div class="metric-note warning">Prioridade de intervenção imediata</div>
-      </div>
-      <div class="metric-card">
-        <div class="metric-sub">SEM ATUALIZAÇÃO &gt; 48H</div>
-        <div class="metric-val">6</div>
-        <div class="metric-note danger">Risco de atraso por inatividade</div>
+      <div class="metric-grid">
+        <div class="metric-card">
+          <div class="metric-sub">LEAD TIME MÉDIO TOTAL</div>
+          <div class="metric-val">7.4 <span class="metric-unit">dias</span></div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-sub">VOLUME EM ESTEIRA</div>
+          <div class="metric-val">42</div>
+          <div class="metric-note success">Distribuídos em 4 áreas</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-sub">ADERÊNCIA AOS SLAS</div>
+          <div class="metric-val">82%</div>
+          <div class="metric-note danger">18% em atraso ou atenção</div>
+        </div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">
-        <span>Distribuição da Demanda Atual por Área Técnica</span>
-        <span class="panel-subtitle">Painel recomendado: Pie Chart / Donut (Grafana)</span>
+    <div class="section-block">
+      <div class="section-title">
+        <span>Capacidade e Distribuição da Demanda</span>
+        <span class="section-title-note">Onde o volume está concentrado e há quanto tempo</span>
       </div>
-      <div class="donut-layout">
-        <div class="donut-chart" id="demand-donut"></div>
-        <div class="donut-legend" id="demand-donut-legend"></div>
-      </div>
-    </div>
-
-    <div class="executive-grid">
       <div class="card">
         <div class="card-title">
-          <span>Aging da Fila por Etapa</span>
-          <span class="panel-subtitle">Painel recomendado: Heatmap / Histograma (Grafana)</span>
+          <span>Distribuição da Demanda Atual por Área Técnica</span>
+          <span class="panel-subtitle">Painel recomendado: Pie Chart / Donut (Grafana)</span>
         </div>
-        <div id="aging-chart"></div>
-        <div class="chart-legend">
-          <span class="legend-item"><span class="legend-dot bg-green"></span>0-2 dias</span>
-          <span class="legend-item"><span class="legend-dot bg-yellow"></span>3-5 dias</span>
-          <span class="legend-item"><span class="legend-dot bg-orange"></span>6-8 dias</span>
-          <span class="legend-item"><span class="legend-dot bg-red"></span>&gt; 8 dias</span>
+        <div class="donut-layout">
+          <div class="donut-chart" id="demand-donut"></div>
+          <div class="donut-legend" id="demand-donut-legend"></div>
+        </div>
+      </div>
+
+      <div class="executive-grid">
+        <div class="card">
+          <div class="card-title">
+            <span>Aging da Fila por Etapa</span>
+            <span class="panel-subtitle">Painel recomendado: Heatmap / Histograma (Grafana)</span>
+          </div>
+          <div id="aging-chart"></div>
+          <div class="chart-legend">
+            <span class="legend-item"><span class="legend-dot bg-green"></span>0-3 dias (dentro do SLA)</span>
+            <span class="legend-item"><span class="legend-dot bg-yellow"></span>4-6 dias</span>
+            <span class="legend-item"><span class="legend-dot bg-orange"></span>7-9 dias</span>
+            <span class="legend-item"><span class="legend-dot bg-red"></span>&gt; 9 dias</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span>Throughput Semanal</span>
+            <span class="panel-subtitle">Painel recomendado: Time Series (Entradas x Concluídos)</span>
+          </div>
+          <div id="throughput-chart"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-block">
+      <div class="section-title">
+        <span>Risco e Priorização de Ação</span>
+        <span class="section-title-note">O que está prestes a atrasar e o que já exige intervenção</span>
+      </div>
+      <div class="metric-grid-2">
+        <div class="metric-card">
+          <div class="metric-sub">SLA EM RISCO (PRÓXIMAS 48H)</div>
+          <div class="metric-val">9</div>
+          <div class="metric-note warning">Prioridade de intervenção imediata</div>
+        </div>
+        <div class="metric-card">
+          <div class="metric-sub">SEM ATUALIZAÇÃO &gt; 48H</div>
+          <div class="metric-val">6</div>
+          <div class="metric-note danger">Risco de atraso por inatividade</div>
         </div>
       </div>
 
       <div class="card">
         <div class="card-title">
-          <span>Throughput Semanal</span>
-          <span class="panel-subtitle">Painel recomendado: Time Series (Entradas x Concluídos)</span>
+          <span>Pareto de Pendências</span>
+          <span class="panel-subtitle">Painel recomendado: Bar Chart (Top causas)</span>
         </div>
-        <div id="throughput-chart"></div>
+        <div id="pareto-chart"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span>SLA Preditivo e Inatividade Operacional</span>
+          <span class="panel-subtitle">Painel recomendado: Tabela de ação (autosserviço + escalonamento)</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Fornecedor</th>
+                <th>Etapa</th>
+                <th>Dias</th>
+                <th>SLA</th>
+                <th>Consumo SLA</th>
+                <th>Sem atualização</th>
+                <th>Responsável</th>
+                <th>Ação recomendada</th>
+              </tr>
+            </thead>
+            <tbody id="table-predictive-risk">
+              <!-- Linhas injetadas dinamicamente -->
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">
-        <span>Pareto de Pendências</span>
-        <span class="panel-subtitle">Painel recomendado: Bar Chart (Top causas)</span>
+    <div class="section-block">
+      <div class="section-title">
+        <span>Consulta e Filtro de Fornecedores</span>
+        <span class="section-title-note">Localize e refine a fila operacional completa</span>
       </div>
-      <div id="pareto-chart"></div>
-    </div>
+      <div class="card">
+        <div class="card-title">Filtrar Fornecedores</div>
+        <div class="filter-bar">
+          <div class="filter-field">
+            <label for="filter-area">Área do Comprador</label>
+            <select id="filter-area" class="filter-select" onchange="applyFilters()">
+              <option value="">Todas</option>
+            </select>
+          </div>
+          <div class="filter-field">
+            <label for="filter-etapa">Etapa Atual</label>
+            <select id="filter-etapa" class="filter-select" onchange="applyFilters()">
+              <option value="">Todas</option>
+            </select>
+          </div>
+          <div class="filter-field">
+            <label for="filter-status">Status</label>
+            <select id="filter-status" class="filter-select" onchange="applyFilters()">
+              <option value="">Todos</option>
+            </select>
+          </div>
+          <button type="button" class="btn-clear-filter" onclick="clearFilters()">Limpar filtros</button>
+        </div>
+      </div>
 
-    <div class="card">
-      <div class="card-title">
-        <span>SLA Preditivo e Inatividade Operacional</span>
-        <span class="panel-subtitle">Painel recomendado: Tabela de ação (autosserviço + escalonamento)</span>
-      </div>
-      <div class="table-wrap">
+      <div class="card">
+        <div class="card-title">Fila Consolidada de Casos Críticos (Amostra Operacional)</div>
+        <div class="table-wrap">
         <table>
           <thead>
             <tr>
               <th>ID</th>
               <th>Fornecedor</th>
-              <th>Etapa</th>
-              <th>Dias</th>
-              <th>SLA</th>
-              <th>Consumo SLA</th>
-              <th>Sem atualização</th>
-              <th>Responsável</th>
-              <th>Ação recomendada</th>
+              <th>Código do vendedor</th>
+              <th>Etapa Atual</th>
+              <th>Dias na Fila</th>
+              <th>Status</th>
             </tr>
           </thead>
-          <tbody id="table-predictive-risk">
+          <tbody id="table-suppliers">
             <!-- Linhas injetadas dinamicamente -->
           </tbody>
         </table>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Fila Consolidada de Casos Críticos (Amostra Operacional)</div>
-      <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Fornecedor</th>
-            <th>Código do vendedor</th>
-            <th>Etapa Atual</th>
-            <th>Dias na Fila</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody id="table-suppliers">
-          <!-- Linhas injetadas dinamicamente -->
-        </tbody>
-      </table>
+        </div>
+        <div class="filter-result-count" id="filter-result-count"></div>
       </div>
     </div>
   </div>
@@ -568,13 +664,14 @@
       razao: "Logística Integrada Brasil Ltda",
       codigoVendedor: "S14582444",
       comprador: "Matheus Santos",
+      areaCompra: "Logística",
       etapa: 5, // 1: Convite, 2: Fornecedor, 3: Cadastro, 4: Tributário, 5: Compliance, 6: ERP
-      diasEtapa: 5,
-      slaMeta: 8,
+      diasEtapa: 6,
+      slaMeta: 3,
       status: "Atrasado",
       pendencia: "Pendência de análise de risco reputacional. Última atualização realizada há 48h pela equipe de conformidade.",
       acao: "Acionar facilitador de Compliance antes do fechamento da rodada comercial.",
-      tempos: ["0,5 dia", "0,5 dia", "1,0 dia", "1,0 dia", "5 dias", "Pendente"]
+      tempos: ["0,5 dia", "0,5 dia", "1,0 dia", "1,0 dia", "6 dias", "Pendente"]
     },
     {
       id: "PRC-002",
@@ -582,13 +679,14 @@
       razao: "TechPrime Soluções de TI",
       codigoVendedor: "S14582445",
       comprador: "Lucas Mendes",
+      areaCompra: "Tecnologia",
       etapa: 3,
-      diasEtapa: 1,
-      slaMeta: 1,
+      diasEtapa: 3,
+      slaMeta: 3,
       status: "Atenção",
       pendencia: "Conferência de Cartão CNPJ e Contrato Social em triagem cadastral.",
       acao: "Acompanhar prazo da etapa de Cadastro no fechamento do dia.",
-      tempos: ["0,5 dia", "0,5 dia", "1,0 dia", "Pendente", "Pendente", "Pendente"]
+      tempos: ["0,5 dia", "0,5 dia", "3,0 dias", "Pendente", "Pendente", "Pendente"]
     },
     {
       id: "PRC-003",
@@ -596,13 +694,14 @@
       razao: "Delta Consultoria e Gestão",
       codigoVendedor: "S14582446",
       comprador: "Matheus Santos",
+      areaCompra: "Serviços Profissionais",
       etapa: 4,
-      diasEtapa: 2,
-      slaMeta: 2,
+      diasEtapa: 4,
+      slaMeta: 3,
       status: "Atrasado",
       pendencia: "CND Municipal de São Paulo com inconsistência no portal da prefeitura.",
       acao: "Solicitar CND atualizada junto ao fornecedor parceiro para desbloqueio fiscal.",
-      tempos: ["1,0 dia", "0,5 dia", "1,0 dia", "2 dias", "Pendente", "Pendente"]
+      tempos: ["1,0 dia", "0,5 dia", "1,0 dia", "4 dias", "Pendente", "Pendente"]
     },
     {
       id: "PRC-004",
@@ -610,6 +709,7 @@
       razao: "Alpha Transportes Rodoviários",
       codigoVendedor: "S14582447",
       comprador: "Juliana M.",
+      areaCompra: "Logística",
       etapa: 6,
       diasEtapa: 0,
       slaMeta: 0,
@@ -630,16 +730,16 @@
   };
 
   const demandDistribution = [
-    { area: "Cadastro de Fornecedores", sla: "SLA: 1 dia", processos: 6, media: "1,1 dia", color: "var(--cb-success)" },
-    { area: "Tributário / Fiscal", sla: "SLA: 2 dias", processos: 12, media: "2,2 dias", color: "#b76e00" },
-    { area: "Compliance / Due Diligence", sla: "SLA: 8 dias", processos: 24, media: "10,1 dias", color: "var(--cb-red)", destaque: "Gargalo Principal" }
+    { area: "Cadastro de Fornecedores", sla: "SLA: 3 dias", processos: 6, media: "1,8 dia", color: "var(--cb-success)" },
+    { area: "Tributário / Fiscal", sla: "SLA: 3 dias", processos: 12, media: "2,6 dias", color: "#b76e00" },
+    { area: "Compliance / Due Diligence", sla: "SLA: 3 dias", processos: 24, media: "5,6 dias", color: "var(--cb-red)", destaque: "Gargalo Principal" }
   ];
 
   const executiveInsights = {
     agingByStage: [
-      { area: "Cadastro", total: 6, buckets: [3, 2, 1, 0] },
-      { area: "Tributário", total: 12, buckets: [4, 5, 2, 1] },
-      { area: "Compliance", total: 24, buckets: [2, 6, 7, 9] }
+      { area: "Cadastro", total: 6, buckets: [5, 1, 0, 0] },
+      { area: "Tributário", total: 12, buckets: [8, 3, 1, 0] },
+      { area: "Compliance", total: 24, buckets: [3, 9, 8, 4] }
     ],
     weeklyThroughput: [
       { period: "Sem 40", entradas: 9, concluidos: 7 },
@@ -659,8 +759,8 @@
         id: "PRC-011",
         fornecedor: "Nordeste Insumos e Logística",
         etapa: 5,
-        diasEtapa: 7,
-        slaMeta: 8,
+        diasEtapa: 6,
+        slaMeta: 3,
         semAtualizacaoHoras: 52,
         responsavel: "Compliance",
         acao: "Priorizar análise de risco reputacional antes da rodada comercial."
@@ -669,8 +769,8 @@
         id: "PRC-018",
         fornecedor: "Minas Equipamentos Industriais",
         etapa: 4,
-        diasEtapa: 2,
-        slaMeta: 2,
+        diasEtapa: 3,
+        slaMeta: 3,
         semAtualizacaoHoras: 49,
         responsavel: "Tributário",
         acao: "Reprocessar CND e acionar parceiro para documento atualizado."
@@ -679,9 +779,9 @@
         id: "PRC-021",
         fornecedor: "Prime Serviços de Tecnologia",
         etapa: 3,
-        diasEtapa: 1,
-        slaMeta: 1,
-        semAtualizacaoHoras: 26,
+        diasEtapa: 2,
+        slaMeta: 3,
+        semAtualizacaoHoras: 50,
         responsavel: "Cadastro",
         acao: "Concluir validação cadastral até fechamento do dia."
       },
@@ -689,8 +789,8 @@
         id: "PRC-025",
         fornecedor: "Sul Distribuição Atacadista",
         etapa: 5,
-        diasEtapa: 8,
-        slaMeta: 8,
+        diasEtapa: 7,
+        slaMeta: 3,
         semAtualizacaoHoras: 60,
         responsavel: "Compliance",
         acao: "Escalonar facilitador e bloquear novas pendências até regularização."
@@ -699,8 +799,8 @@
         id: "PRC-029",
         fornecedor: "Rio Alto Soluções Empresariais",
         etapa: 4,
-        diasEtapa: 1,
-        slaMeta: 2,
+        diasEtapa: 2,
+        slaMeta: 3,
         semAtualizacaoHoras: 54,
         responsavel: "Tributário",
         acao: "Retomar análise fiscal em regime de priorização."
@@ -875,11 +975,11 @@
 
   function renderTracker(supplier) {
     const steps = [
-      { name: "1. Convite", sla: "SLA: 2 dias" },
+      { name: "1. Convite", sla: "SLA: 3 dias" },
       { name: "2. Fornecedor" },
-      { name: "3. Cadastro", sla: "SLA: 1 dia" },
-      { name: "4. Tributário", sla: "SLA: 2 dias" },
-      { name: "5. Compliance", sla: "SLA: 8 dias" },
+      { name: "3. Cadastro", sla: "SLA: 3 dias" },
+      { name: "4. Tributário", sla: "SLA: 3 dias" },
+      { name: "5. Compliance", sla: "SLA: 3 dias" },
       { name: "6. ERP", sla: "SLA: Imediato" }
     ];
 
@@ -958,15 +1058,73 @@
     } else {
       document.getElementById("view-buyer").style.display = "none";
       document.getElementById("view-executive").style.display = "block";
-      populateTable();
+      populateFilterOptions();
+      applyFilters();
       populateExecutivePanels();
     }
   }
 
-  function populateTable() {
+  function populateFilterOptions() {
+    const areaSelect = document.getElementById("filter-area");
+    const etapaSelect = document.getElementById("filter-etapa");
+    const statusSelect = document.getElementById("filter-status");
+    if (!areaSelect || !etapaSelect || !statusSelect) return;
+    if (areaSelect.dataset.populated === "true") return;
+
+    const areas = [...new Set(database.map(s => s.areaCompra))].sort();
+    areas.forEach(area => {
+      const option = document.createElement("option");
+      option.value = area;
+      option.textContent = area;
+      areaSelect.appendChild(option);
+    });
+
+    const etapasUsadas = [...new Set(database.map(s => s.etapa))].sort((a, b) => a - b);
+    etapasUsadas.forEach(etapa => {
+      const option = document.createElement("option");
+      option.value = etapa;
+      option.textContent = `Etapa ${etapa} - ${stageNames[etapa]}`;
+      etapaSelect.appendChild(option);
+    });
+
+    const statusList = [...new Set(database.map(s => s.status))];
+    statusList.forEach(status => {
+      const option = document.createElement("option");
+      option.value = status;
+      option.textContent = status;
+      statusSelect.appendChild(option);
+    });
+
+    areaSelect.dataset.populated = "true";
+  }
+
+  function applyFilters() {
+    const areaValue = document.getElementById("filter-area").value;
+    const etapaValue = document.getElementById("filter-etapa").value;
+    const statusValue = document.getElementById("filter-status").value;
+
+    const filtered = database.filter(s => {
+      const matchArea = !areaValue || s.areaCompra === areaValue;
+      const matchEtapa = !etapaValue || String(s.etapa) === etapaValue;
+      const matchStatus = !statusValue || s.status === statusValue;
+      return matchArea && matchEtapa && matchStatus;
+    });
+
+    populateTable(filtered);
+  }
+
+  function clearFilters() {
+    document.getElementById("filter-area").value = "";
+    document.getElementById("filter-etapa").value = "";
+    document.getElementById("filter-status").value = "";
+    applyFilters();
+  }
+
+  function populateTable(list) {
+    const suppliers = list || database;
     const tbody = document.getElementById("table-suppliers");
     tbody.innerHTML = "";
-    database.forEach(s => {
+    suppliers.forEach(s => {
       const tr = document.createElement("tr");
       tr.tabIndex = 0;
       tr.setAttribute("aria-label", `${s.razao}, ${s.status}, etapa ${s.etapa}`);
@@ -987,6 +1145,11 @@
       `;
       tbody.appendChild(tr);
     });
+
+    const counter = document.getElementById("filter-result-count");
+    if (counter) {
+      counter.textContent = `Exibindo ${suppliers.length} de ${database.length} fornecedor(es)`;
+    }
   }
 
   document.getElementById("search-input").addEventListener("keydown", event => {
